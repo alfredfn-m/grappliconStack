@@ -1,3 +1,4 @@
+from tkinter import CASCADE
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
@@ -33,10 +34,8 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-
-
-
 class CustomUser(AbstractUser):
+
     username = None
     email = models.EmailField(_('email address'),max_length=50, unique=True)
     first_name = models.CharField(max_length=50)
@@ -62,3 +61,52 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+class Tournament(models.Model):
+    host = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
+    # When is the tournament
+    date_of_tournament = models.DateTimeField(auto_now_add=True)
+    # Location of tournament
+    address = models.CharField(max_length=100, default='Address')
+    city = models.CharField(max_length=100, default='City')
+    state_or_province = models.CharField(max_length=100, default='State or Province')
+    nation = models.CharField(max_length=100, default='Nation')
+
+class Champions(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    champion = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    # Bracket Information
+    # SEX
+    sex = models.CharField(max_length=2, choices=SEX_CHOICES, default=MALE)
+    # AGE
+    age = models.CharField(max_length=5, choices=AGE_CHOICES, default=UPCOMING)
+    # RANK
+    rank = models.CharField(max_length=5, choices=RANK_CHOICES, default=WHITE)
+    # weight
+    weight = models.CharField(max_length=4, choices=WEIGHT_CHOICES, default=LESS125)
+
+class Sex(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    # SEX
+    sex = models.CharField(max_length=2, choices=SEX_CHOICES, default=MALE)
+
+class Age(models.Model):
+    sex = models.ForeignKey(Sex, on_delete=models.CASCADE)
+    # AGE
+    age = models.CharField(max_length=5, choices=AGE_CHOICES, default=UPCOMING)
+
+class Rank(models.Model):
+    Age = models.ForeignKey(Age, on_delete=models.CASCADE)
+    # RANK
+    rank = models.CharField(max_length=5, choices=RANK_CHOICES, default=WHITE)
+
+class Weight(models.Model):
+    Rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
+    # weight
+    weight = models.CharField(max_length=4, choices=WEIGHT_CHOICES, default=LESS125)
+    number_of_competitors = models.IntegerField()
+
+class Competitor(models.Model):
+    weight = models.ForeignKey(Weight, on_delete=models.CASCADE)
+    # Competitor Profile
+    competitor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
