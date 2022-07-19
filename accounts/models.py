@@ -88,6 +88,8 @@ class Champion(models.Model):
     rank = models.CharField(max_length=5, choices=RANK_CHOICES, default=WHITE)
     # weight
     weight = models.CharField(max_length=4, choices=WEIGHT_CHOICES, default=LESS125)
+    # points
+    points = models.IntegerField(default=0)
     
     def __str__(self):
         return self.champion.email
