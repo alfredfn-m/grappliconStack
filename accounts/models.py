@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .theChoices import *
 from django.contrib.auth.base_user import BaseUserManager
+from django.utils import timezone
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -65,6 +66,16 @@ class CustomUser(AbstractUser):
 class Tournament(models.Model):
     host = models.ForeignKey(CustomUser, on_delete=models.RESTRICT)
     name = models.CharField(max_length=100, default='Tournament Name')
+
+    def __str__(self):
+       # return  self.name + ', ' +  self.host.email + ', ' + str(self.date_of_tournament.date())
+       return self.name + ', ' + self.host.email
+
+
+class Event(models.Model):
+    tournament = models.ForeignKey(Tournament, on_delete=models.RESTRICT)
+    # information
+    active = models.BooleanField(default=True)
     # When is the tournament
     date_of_tournament = models.DateTimeField()
     # Location of tournament
@@ -74,10 +85,12 @@ class Tournament(models.Model):
     nation = models.CharField(max_length=100, default='Nation')
 
     def __str__(self):
-        return self.host.email + ', ' + self.name + ', ' + str(self.date_of_tournament.date())
+        return str(self.id)
+
+
 
 class Champion(models.Model):
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     champion = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     # Bracket Information
     # SEX
@@ -95,7 +108,11 @@ class Champion(models.Model):
         return self.champion.email
 
 class Sex(models.Model):
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name_plural = 'Sexes'
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     # SEX
     sex = models.CharField(max_length=2, choices=SEX_CHOICES, default=MALE)
 
@@ -111,7 +128,7 @@ class Age(models.Model):
         return self.age
 
 class Rank(models.Model):
-    Age = models.ForeignKey(Age, on_delete=models.CASCADE)
+    age = models.ForeignKey(Age, on_delete=models.CASCADE)
     # RANK
     rank = models.CharField(max_length=5, choices=RANK_CHOICES, default=WHITE)
 
@@ -119,10 +136,10 @@ class Rank(models.Model):
         return self.rank
 
 class Weight(models.Model):
-    Rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
+    rank = models.ForeignKey(Rank, on_delete=models.CASCADE)
     # weight
     weight = models.CharField(max_length=4, choices=WEIGHT_CHOICES, default=LESS125)
-    number_of_competitors = models.IntegerField()
+    number_of_competitors = models.IntegerField(default=0)
 
     def __str__(self):
         return self.weight
@@ -135,4 +152,34 @@ class Competitor(models.Model):
     points = models.IntegerField(default=0)
 
     def __str__(self):
-        return self.competitor.email + ', ' + self.points
+        return self.competitor.email + ', ' + str(self.points)
+
+class Round(models.Model):
+    weight = models.ForeignKey(Weight, on_delete=models.CASCADE)
+    round = models.IntegerField(default=1)
+
+class Result(models.Model):
+
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    # Specifics
+    competitorA = models.ForeignKey(Competitor, null=True, related_name='competitorA', on_delete=models.CASCADE)
+    competitorB = models.ForeignKey(Competitor, null=True, related_name='CompetitorB', on_delete=models.CASCADE)
+    winner = models.ForeignKey(Competitor, related_name='Winner', null=True, on_delete=models.CASCADE)
+    points = models.IntegerField(default=0)
+    created_date = models.DateTimeField(default=timezone.now)
+    comments = models.TextField(blank=True)
+
+    # can adjust points / time for future features
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(points__gte=0) & models.Q(points__lte=300),
+                name='Points value is valid between 1 and 300',
+            )
+        ]
+
+# existing problems include:
+# competitors of results in populating choices with competitors
+# who do not belong in the round / event
+# will need to filter choices
