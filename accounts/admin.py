@@ -312,5 +312,8 @@ class ResultAdmin(admin.ModelAdmin):
 
     raw_id_fields = [
         'round',
+        'competitorA',
+        'competitorB',
+        'winner',
     ]
 
