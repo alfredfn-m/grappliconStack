@@ -179,7 +179,3 @@ class Result(models.Model):
             )
         ]
 
-# existing problems include:
-# competitors of results in populating choices with competitors
-# who do not belong in the round / event
-# will need to filter choices
