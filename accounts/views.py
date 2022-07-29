@@ -12,10 +12,15 @@ def home(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.success(request, ("LOGIN ERROR, TRY AGAIN"))
+            messages.success(request, ('LOGIN ERROR, TRY AGAIN'))
             return redirect('home')
     else:
         return render(request, 'base.html')
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, ('Logged Out'))
+    return redirect('home')
 
 def tournament(request):
     return render(request, 'tournament.html')
