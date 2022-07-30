@@ -1,14 +1,18 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .models import CustomUser
+from .theChoices import WEIGHT_CHOICES, AGE_CHOICES, RANK_CHOICES
 
 # Create your views here.
 def home(request):
     if request.method == 'POST':
         email = request.POST['email']
         password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
+        user = authenticate(request, 
+            email=email, 
+            password=password)
         if user is not None:
             login(request, user)
             return redirect('home')
@@ -34,8 +38,19 @@ def register_user(request):
                 email = form.cleaned_data['email']
                 first_name = form.cleaned_data['first_name']
                 last_name = form.cleaned_data['last_name']
+                sex = request.POST['sex']
+                birthday = request.POST['birthday']
+                rank = request.POST['rank']
                 password = form.cleaned_data['password1']
-                user = authenticate(email=email, first_name=first_name, last_name=last_name, password=password)
+                user = authenticate(request, 
+                    email=email,
+                    first_name=first_name,
+                    last_name=last_name, 
+                    password=password,
+                    sex=sex,
+                    birthday=birthday,
+                    rank=rank,
+                    )
                 login(request, user)
                 messages.success(request, ('REGRISTRATION SUCCESSFUL'))
                 return redirect('home')
@@ -52,11 +67,40 @@ def about(request):
 def tournament(request):
     return render(request, 'tournament.html')
 
-def competitors(request):
-    return render(request, 'competitors.html')
+def competitor(request):
+    return render(request, 'competitor.html')
 
 def history(request):
-    return render(request, 'history.html')
+    if request.user.is_authenticated:
+        return render(request, 'history.html')
+    else:
+        return redirect('home')
 
 def account(request):
-    return render(request, 'account.html')
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            user_profile = CustomUser.objects.get(id=request.user.id)
+            userRank = user_profile.rank
+            form = CustomUserChangeForm(request.POST, instance=user_profile)
+            if form.is_valid():
+                rank = request.POST['rank']
+                if checkRank(rank, userRank):
+                    pass
+                else:
+                    pass
+                form.save()
+                messages.success(request, ('Update Completed'))
+            else:
+                messages.success(request, ('Update Failed'))
+            return redirect('account')
+        else:
+            form = CustomUserChangeForm()
+
+        return render(request, 'account.html', {
+            'form':form,
+        })
+    else:
+        return redirect('home')
+
+def checkRank(rank, userRank):
+    pass

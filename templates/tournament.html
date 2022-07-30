@@ -11,7 +11,7 @@
     <ul>
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'about' %}">About</a></li>
-        <li><a href="{% url 'competitors' %}">Competitors</a></li>
+        <li><a href="{% url 'competitor' %}">Competitors</a></li>
         {% if user.is_authenticated %}
             <li><a href="{% url 'history' %}">history</a></li>
             <li><a href="{% url 'account' %}">account</a></li>
