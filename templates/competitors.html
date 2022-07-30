@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Competitors</title>
 </head>
 <body>
-
     <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'about' %}">About</a></li>
         <li><a href="{% url 'tournament' %}">Tournament</a></li>
-        <li><a href="{% url 'competitors' %}">Competitors</a></li>
         {% if user.is_authenticated %}
             <li><a href="{% url 'history' %}">history</a></li>
             <li><a href="{% url 'account' %}">account</a></li>
@@ -20,23 +19,7 @@
     </ul>
 
     <h1>
-       Home
+        Competitors
     </h1>
-    <!--Messages-->
-    {% if messages %}
-        {% for message in messages%}
-            <p>{{ message }}</p>
-        {% endfor %}
-    {% endif %}
-
-    <!--User Profile-->
-    {% include './login.html' %}
-
-    <!--Currently Registered-->
-    {% include './currentlyReg.html' %}
-
-    <!--Performance-->
-    {% include './performance.html' %}
-
 </body>
 </html>

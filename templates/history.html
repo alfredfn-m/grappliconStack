@@ -4,26 +4,22 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register User</title>
+    <title>History</title>
 </head>
 <body>
 
     <ul>
         <li><a href="{% url 'home' %}">Home</a></li>
-        <li><a href="{% url 'about' %}">About</a></li>
         <li><a href="{% url 'tournament' %}">Tournament</a></li>
         <li><a href="{% url 'competitors' %}">Competitors</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'account' %}">Account</a></li>
+            <li><a href="{% url 'logout_user' %}">Logout</a></li>
+        {% endif %}
     </ul>
 
-    <h1>REGISTRATION FOR NEW USERS</h1>
-    <br>
-    {% if form.errors %}
-        <p>THERE WAS AN ERROR WITH REGISTRATION</p>
-    {% endif %}
-    <form action="{% url 'register_user' %}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
-    </form>
+    <h1>
+        History
+    </h1>
 </body>
 </html>
