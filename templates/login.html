@@ -6,7 +6,7 @@
 
 {% else %}
 
-    <form action="" method=POST>
+    <form action='' method='POST'>
         {% csrf_token %}
         <div>
             <label for="email">Email Address</label>
@@ -14,8 +14,8 @@
         </div>
         <br>
         <div>
-            <label for="pass">Password (8 Characters minimum)</label>
-            <input type="password" id="pass" name="password" minlength="8" required>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" minlength="8" required>
         </div>
         <br>
         <input type='submit' value='Submit'>

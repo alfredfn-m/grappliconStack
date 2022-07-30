@@ -1,10 +1,11 @@
-from tkinter import CASCADE
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 from .theChoices import *
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils import timezone
+import datetime
 
 # Create your models here.
 class UserManager(BaseUserManager):
@@ -45,11 +46,9 @@ class CustomUser(AbstractUser):
     # SEX
     sex = models.CharField(max_length=2, choices=SEX_CHOICES, default=MALE)
     # AGE
-    age = models.CharField(max_length=5, choices=AGE_CHOICES, default=UPCOMING)
+    birthday = models.DateField(null=True)
     # RANK
     rank = models.CharField(max_length=5, choices=RANK_CHOICES, default=WHITE)
-    # weight
-    weight = models.CharField(max_length=4, choices=WEIGHT_CHOICES, default=LESS125)
 
     objects = UserManager()
 
