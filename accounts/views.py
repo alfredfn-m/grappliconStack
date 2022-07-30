@@ -46,6 +46,17 @@ def register_user(request):
             'form':form,
             })
 
+def about(request):
+    return render(request, 'about.html')
 
 def tournament(request):
     return render(request, 'tournament.html')
+
+def competitors(request):
+    return render(request, 'competitors.html')
+
+def history(request):
+    return render(request, 'history.html')
+
+def account(request):
+    return render(request, 'account.html')

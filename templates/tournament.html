@@ -8,8 +8,19 @@
     <title>Tournament</title>
 </head>
 <body>
+    <ul>
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'about' %}">About</a></li>
+        <li><a href="{% url 'competitors' %}">Competitors</a></li>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'history' %}">history</a></li>
+            <li><a href="{% url 'account' %}">account</a></li>
+            <li><a href="{% url 'logout_user' %}">Logout</a></li>
+        {% endif %}
+    </ul>
+
     <h1>
-        tournament
+        Tournament
     </h1>
 </body>
 </html>
